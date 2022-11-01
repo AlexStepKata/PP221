@@ -1,39 +1,68 @@
 package hiber.dao;
 
+import hiber.model.Car;
 import hiber.model.User;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+
 import javax.persistence.TypedQuery;
-import java.util.List;
+import java.util.*;
 
 @Repository
 public class UserDaoImp implements UserDao {
 
    private final SessionFactory sessionFactory;
 
+   @Autowired
    public UserDaoImp(SessionFactory sessionFactory) {
       this.sessionFactory = sessionFactory;
    }
+
    @Override
    public void add(User user) {
       sessionFactory.getCurrentSession().save(user);
    }
 
    @Override
-   @SuppressWarnings("unchecked")
    public List<User> listUsers() {
-      TypedQuery<User> query=sessionFactory.getCurrentSession().createQuery("from User");
-      return query.getResultList();
-   }
-   @Override
-   @SuppressWarnings("unchecked")
-   public User getUserByCar(String model, int series) {
-      String hql = "from User user where user.car.model = :model and user.car.series = :series";
-      TypedQuery<User> query = sessionFactory.getCurrentSession().createQuery(hql);
-      query.setParameter("model", model).setParameter("series", series);
-      return query.setMaxResults(1).getSingleResult();
+      try(Session session = sessionFactory.openSession()) {
+         TypedQuery<User> query = session.createQuery("select u from User u", User.class);
+         return query.getResultList();
+      } catch (Exception e) {
+         System.out.println("Произошла ошибка при вызове списка юзеров");
+         return new ArrayList<>();
+      }
    }
 
+
+
+   @Override
+   public User getUserByModelAndSeries(String modelCar, int seriesCar) {
+      String hql = "select u FROM User u where u.car.model = :model AND u.car.series = :series";
+      try (Session session = sessionFactory.openSession()) {
+         TypedQuery<User> query = session.createQuery(hql, User.class);
+         query.setParameter("model", modelCar);
+         query.setParameter("series", seriesCar);
+         return query.getSingleResult();
+      } catch (Exception e) {
+         System.out.println("Нет подходящего юзера");
+         return new User();
+      }
+   }
+
+   @Override
+   public Car getCarByUserFirstName(String firstName) {
+      String hql2 = "FROM User where firstName = :firstName";
+      try (Session session = sessionFactory.openSession()) {
+         TypedQuery<User> query = session.createQuery(hql2, User.class);
+         query.setParameter("firstName", firstName);
+         return query.getSingleResult().getCar();
+      } catch (Exception e) {
+         System.out.println("Нет подходящей тачки");
+         return new Car();
+      }
+   }
 }

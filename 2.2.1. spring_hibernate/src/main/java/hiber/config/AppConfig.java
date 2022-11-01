@@ -21,12 +21,8 @@ import java.util.Properties;
 @EnableTransactionManagement
 @ComponentScan(value = "hiber")
 public class AppConfig {
-
-   private final Environment env;
-
-   public AppConfig(Environment env) {
-      this.env = env;
-   }
+   @Autowired
+   private  Environment env;
 
    @Bean
    public DataSource getDataSource() {

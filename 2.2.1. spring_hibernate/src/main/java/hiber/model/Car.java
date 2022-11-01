@@ -1,68 +1,73 @@
 package hiber.model;
 
+import org.springframework.context.annotation.Lazy;
+
 import javax.persistence.*;
 
 @Entity
-@Table(name = "cars")
 public class Car {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
-    @Column(name = "Model")
-    private String model;
-    @Column(name = "Series")
-    private int series;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Car() {
-    }
-
-    public Car(String model, int series) {
+    public Car( String model, int series) {   //КОНСТРУКТОР БЕЗ ЮЗЕРА
         this.model = model;
         this.series = series;
     }
 
-    public Long getId() {
-        return id;
+    public Car( User user, String model, int series) {   //КОНСТРУКТОР С ЮЗЕРОМ
+        this.user = user;
+        this.model = model;
+        this.series = series;
     }
 
-    public String getModel() {
-        return model;
-    }
+    public Car() { }
 
-    public int getSeries() {
-        return series;
-    }
+    private String model;
+    private int series;
 
     public User getUser() {
         return user;
+    }
+
+    public void setUser(User user) { this.user = user; }
+
+    public Long getId() {
+        return id;
     }
 
     public void setId(Long id) {
         this.id = id;
     }
 
+    public String getModel() {
+        return model;
+    }
+
     public void setModel(String model) {
         this.model = model;
+    }
+
+    public int getSeries() {
+        return series;
     }
 
     public void setSeries(int series) {
         this.series = series;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     @Override
     public String toString() {
         return "\nCar{" +
-                "id=" + id +
-                ", model='" + model + '\'' +
-                ", series=" + series +
-                ", user=" + user +
-                '}';
+                "\n id = '" + id + '\'' +
+                "\n model = '" + model + '\'' +
+                "\n series = '" + series + '\'' +
+                "\n" + '}';
     }
 }

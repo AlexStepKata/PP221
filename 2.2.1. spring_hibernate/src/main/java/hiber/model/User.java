@@ -3,12 +3,16 @@ package hiber.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 public class User {
 
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;
+
+   @OneToOne(cascade = CascadeType.ALL)
+   @JoinColumn(name = "car_id")
+   private Car car;
 
    @Column(name = "name")
    private String firstName;
@@ -19,15 +23,19 @@ public class User {
    @Column(name = "email")
    private String email;
 
-   @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
-   private Car car;
+   public User() { }
 
-   public User() {}
-   
-   public User(String firstName, String lastName, String email) {
+   public User(String firstName, String lastName, String email) {   //КОНСТРУКТОР БЕЗ МАШИНЫ
       this.firstName = firstName;
       this.lastName = lastName;
       this.email = email;
+   }
+
+   public User( String firstName, String lastName, String email, Car car) {    //КОНСТРУКТОР С МАШИНОЙ
+      this.firstName = firstName;
+      this.lastName = lastName;
+      this.email = email;
+      this.car = car;
    }
 
    public Long getId() {
@@ -62,14 +70,19 @@ public class User {
       this.email = email;
    }
 
+   public Car getCar() { return car; }
+
+   public void setCar(Car car) { this.car = car; }
+
    @Override
    public String toString() {
       return "\nUser{" +
-              "id=" + id +
-              ", firstName='" + firstName + '\'' +
-              ", lastName='" + lastName + '\'' +
-              ", email='" + email + '\'' +
-              ", car=" + car +
-              '}';
+              "\n id=" + id +
+              "\n firstName = '" + firstName + '\'' +
+              "\n lastName = '" + lastName + '\'' +
+              "\n email = '" + email + '\'' +
+              "\n Car Model = '" + car.getModel() + '\'' +
+              '\n' + '}';
    }
+
 }
