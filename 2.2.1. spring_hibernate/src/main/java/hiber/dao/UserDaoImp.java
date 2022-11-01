@@ -41,7 +41,7 @@ public class UserDaoImp implements UserDao {
 
    @Override
    public User getUserByModelAndSeries(String modelCar, int seriesCar) {
-      String hql = "select u FROM User u where u.car.model = :model AND u.car.series = :series";
+      String hql = "select u from User u where u.car.model = :model AND u.car.series = :series";
       try (Session session = sessionFactory.openSession()) {
          TypedQuery<User> query = session.createQuery(hql, User.class);
          query.setParameter("model", modelCar);
@@ -55,7 +55,7 @@ public class UserDaoImp implements UserDao {
 
    @Override
    public Car getCarByUserFirstName(String firstName) {
-      String hql2 = "FROM User where firstName = :firstName";
+      String hql2 = "select u from User u where u.firstName = :firstName";
       try (Session session = sessionFactory.openSession()) {
          TypedQuery<User> query = session.createQuery(hql2, User.class);
          query.setParameter("firstName", firstName);
